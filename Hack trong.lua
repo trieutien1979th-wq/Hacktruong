@@ -1,43 +1,59 @@
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "SukunaMenu"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = PlayerGui
+ScreenGui.Name = "BananaStyleMenu"
+ScreenGui.Parent = Player:WaitForChild("PlayerGui")
 
-local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 300, 0, 250)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -125)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.Parent = ScreenGui
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+MainFrame.BorderSizePixel = 0
+MainFrame.Parent = ScreenGui
+MainFrame.Active = true
+MainFrame.Draggable = true
 
 local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 12)
-Corner.Parent = Frame
+Corner.CornerRadius = UDim.new(0, 8)
+Corner.Parent = MainFrame
 
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Size = UDim2.new(1, 0, 0, 50)
-TitleLabel.Position = UDim2.new(0, 0, 0, 10)
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "Sukuna"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.TextSize = 24
-TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Parent = Frame
+local SideBar = Instance.new("Frame")
+SideBar.Size = UDim2.new(0, 150, 1, 0)
+SideBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+SideBar.BorderSizePixel = 0
+SideBar.Parent = MainFrame
 
-local Button = Instance.new("TextButton")
-Button.Size = UDim2.new(0, 200, 0, 50)
-Button.Position = UDim2.new(0.5, -100, 0.5, 25)
-Button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-Button.Text = "Nhấn vào đây"
-Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Button.TextSize = 20
-Button.Parent = Frame
+local SideCorner = Instance.new("UICorner")
+SideCorner.CornerRadius = UDim.new(0, 8)
+SideCorner.Parent = SideBar
 
-Button.MouseButton1Click:Connect(function()
-    print("Nút đã được nhấn!")
-end)
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Size = UDim2.new(1, -150, 1, 0)
+ContentFrame.Position = UDim2.new(0, 150, 0, 0)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.Parent = MainFrame
 
-```
+local function CreateTab(name, yPos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -20, 0, 40)
+    btn.Position = UDim2.new(0, 10, 0, yPos)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 16
+    btn.Parent = SideBar
+    
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 6)
+    btnCorner.Parent = btn
+    
+    btn.MouseButton1Click:Connect(function()
+        print("Đã chuyển sang tab: " .. name)
+    end)
+end
+
+CreateTab("Main", 20)
+CreateTab("Teleport", 70)
+CreateTab("Misc", 120)
