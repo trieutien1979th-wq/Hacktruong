@@ -1,4 +1,4 @@
-loadstring(game:HttpGet("local Players = game:GetService("Players")
+local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
@@ -39,4 +39,5 @@ Button.Parent = Frame
 Button.MouseButton1Click:Connect(function()
     print("Nút đã được nhấn!")
 end)
-        "))()
+
+```
