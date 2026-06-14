@@ -4,7 +4,7 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "SukunaMenu"
-ScreenGui.ResetOnSpawn = false
+ScreenGui.ResetOnSpawn = true
 ScreenGui.Parent = PlayerGui
 
 local Frame = Instance.new("Frame")
