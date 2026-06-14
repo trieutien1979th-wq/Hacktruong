@@ -128,3 +128,25 @@ OpenButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = true
     OpenButton.Visible = false
 end)
+-- Cập nhật giao diện nút
+    HitboxButton.Text = hitboxActive and "⭕ Phóng To Hitbox Địch: BẬT" or "⭕ Phóng To Hitbox Địch: TẮT"
+    HitboxButton.BackgroundColor3 = hitboxActive and Color3.fromRGB(39, 174, 96) or Color3.fromRGB(211, 84, 0)
+    
+    -- Nếu TẮT thì reset lại tất cả
+    if not hitboxActive then
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= Player and p.Character then
+                local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.Size = Vector3.new(2, 2, 1)
+                    hrp.Transparency = 1
+                    hrp.Color = Color3.fromRGB(255, 255, 255)
+                    hrp.CanCollide = true
+                end
+            end
+        end
+    else
+        -- Nếu BẬT thì chạy quét ngay lập tức
+        updateHitboxes()
+    end
+end)
