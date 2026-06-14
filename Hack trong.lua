@@ -1,10 +1,15 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
-local ScreenGui = Instance.new("ScreenGui")
+if PlayerGui:FindFirstChild("BananaStyleMenu") then
+    PlayerGui.BananaStyleMenu:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "BananaStyleMenu"
-ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 500, 0, 300)
@@ -13,27 +18,59 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 MainFrame.BorderSizePixel = 0
 MainFrame.Parent = ScreenGui
 MainFrame.Active = true
-MainFrame.Draggable = true
+MainFrame.Visible = true
 
-local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, 8)
-Corner.Parent = MainFrame
+local MainCorner = Instance.new("UICorner", MainFrame)
+MainCorner.CornerRadius = UDim.new(0, 8)
 
-local SideBar = Instance.new("Frame")
-SideBar.Size = UDim2.new(0, 150, 1, 0)
+local TopBar = Instance.new("Frame", MainFrame)
+TopBar.Size = UDim2.new(1, 0, 0, 40)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TopBar.BorderSizePixel = 0
+local TopCorner = Instance.new("UICorner", TopBar)
+TopCorner.CornerRadius = UDim.new(0, 8)
+
+local TitleLabel = Instance.new("TextLabel", TopBar)
+TitleLabel.Size = UDim2.new(1, -80, 1, 0)
+TitleLabel.Position = UDim2.new(0, 10, 0, 0)
+TitleLabel.Text = "Banana Hub"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 18
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.BackgroundTransparency = 1
+
+local CloseButton = Instance.new("TextButton", TopBar)
+CloseButton.Size = UDim2.new(0, 60, 0, 30)
+CloseButton.Position = UDim2.new(1, -70, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "Close"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 14
+CloseButton.Font = Enum.Font.SourceSansBold
+local CloseCorner = Instance.new("UICorner", CloseButton)
+CloseCorner.CornerRadius = UDim.new(0, 4)
+
+local OpenButton = Instance.new("TextButton", ScreenGui)
+OpenButton.Size = UDim2.new(0, 100, 0, 40)
+OpenButton.Position = UDim2.new(0, 20, 0, 20)
+OpenButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+OpenButton.Text = "Open Menu"
+OpenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenButton.TextSize = 14
+OpenButton.Font = Enum.Font.SourceSansBold
+OpenButton.Visible = false
+local OpenCorner = Instance.new("UICorner", OpenButton)
+OpenCorner.CornerRadius = UDim.new(0, 4)
+
+local SideBar = Instance.new("Frame", MainFrame)
+SideBar.Size = UDim2.new(0, 150, 1, -40)
+SideBar.Position = UDim2.new(0, 0, 0, 40)
 SideBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 SideBar.BorderSizePixel = 0
-SideBar.Parent = MainFrame
 
-local SideCorner = Instance.new("UICorner")
+local SideCorner = Instance.new("UICorner", SideBar)
 SideCorner.CornerRadius = UDim.new(0, 8)
-SideCorner.Parent = SideBar
-
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Size = UDim2.new(1, -150, 1, 0)
-ContentFrame.Position = UDim2.new(0, 150, 0, 0)
-ContentFrame.BackgroundTransparency = 1
-ContentFrame.Parent = MainFrame
 
 local function CreateTab(name, yPos)
     local btn = Instance.new("TextButton")
@@ -43,11 +80,11 @@ local function CreateTab(name, yPos)
     btn.Text = name
     btn.TextColor3 = Color3.fromRGB(255, 255, 255)
     btn.TextSize = 16
+    btn.Font = Enum.Font.SourceSans
     btn.Parent = SideBar
     
-    local btnCorner = Instance.new("UICorner")
-    btnCorner.CornerRadius = UDim.new(0, 6)
-    btnCorner.Parent = btn
+    local btnCorner = Instance.new("UICorner", btn)
+    btnCorner.CornerRadius = UDim.new(0, 4)
     
     btn.MouseButton1Click:Connect(function()
         print("Đã chuyển sang tab: " .. name)
@@ -57,3 +94,37 @@ end
 CreateTab("Main", 20)
 CreateTab("Teleport", 70)
 CreateTab("Misc", 120)
+
+local dragging = false
+local dragStart, startPos
+
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    OpenButton.Visible = true
+end)
+
+OpenButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    OpenButton.Visible = false
+end)
